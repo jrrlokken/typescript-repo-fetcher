@@ -1,24 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
+import axios from 'axios';
+import { GitHubRepository, GitHubSearchResultType} from "./Types/Github";
+import SearchForm from './Components/SearchForm';
+import ListRepositories from './Components/ListRepositories';
 import './App.css';
 
+
+
 function App() {
+  const [repositories, setRepositories] = React.useState<Array<GitHubRepository>>();
+
+  async function search(query: string) {
+    const result = await axios.get<GitHubSearchResultType>(`https://api.github.com/search/repositories?q=${query}`);
+    setRepositories(result.data.items);
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <SearchForm search={search} />
+      <ListRepositories repositories={repositories} />
     </div>
   );
 }
